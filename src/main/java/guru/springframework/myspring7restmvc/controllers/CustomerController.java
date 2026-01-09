@@ -1,6 +1,5 @@
 package guru.springframework.myspring7restmvc.controllers;
 
-import guru.springframework.myspring7restmvc.model.Beer;
 import guru.springframework.myspring7restmvc.model.Customer;
 import guru.springframework.myspring7restmvc.services.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,49 +22,47 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/customer")
 public class CustomerController {
+
+    public static final String CUSTOMER_PATH = "/api/v1/customer";
+    public static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
 
     private final CustomerService customerService;
 
-    @GetMapping
+    @GetMapping(CUSTOMER_PATH)
     public List<Customer> getCustomers() {
         return customerService.findAll();
     }
 
-    @GetMapping("/{customerID}")
-    public Customer getCustomerById(@PathVariable("customerID") UUID id) {
+    @GetMapping(CUSTOMER_PATH_ID)
+    public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
         log.debug("Get custormer by ID - in customer controller");
-        return customerService.findById(id);
+        return customerService.findById(customerId);
     }
 
-    @PostMapping
+    @PostMapping(CUSTOMER_PATH)
     public ResponseEntity handleCreateCustomer(@RequestBody Customer customer) {
         Customer createdCustomer = customerService.saveCustomer(customer);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/api/v1/customer/" + createdCustomer.getId());
+        headers.add("Location", CUSTOMER_PATH + "/" + createdCustomer.getId());
 
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{customerId}")
+    @PutMapping(CUSTOMER_PATH_ID)
     public ResponseEntity handleUpdateCustomer(@PathVariable UUID customerId, @RequestBody Customer customer) {
-        Customer updatedCustomer = customerService.updateById(customerId, customer);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/api/v1/customer/" + updatedCustomer.getId());
-
-        return new ResponseEntity(headers, HttpStatus.NO_CONTENT);
+        customerService.updateCustomerById(customerId, customer);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{customerId}")
+    @DeleteMapping(CUSTOMER_PATH_ID)
     public ResponseEntity handleDeleteCustomer(@PathVariable UUID customerId) {
         customerService.deleteById(customerId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{customerId}")
+    @PatchMapping(CUSTOMER_PATH_ID)
     public ResponseEntity handlePatchBeerById(@PathVariable("customerId") UUID customerId, @RequestBody Customer customer) {
         customerService.patchById(customerId, customer);
         return new ResponseEntity(HttpStatus.NO_CONTENT);

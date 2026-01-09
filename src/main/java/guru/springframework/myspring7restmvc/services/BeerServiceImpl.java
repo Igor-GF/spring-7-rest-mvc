@@ -1,6 +1,5 @@
 package guru.springframework.myspring7restmvc.services;
 
-import ch.qos.logback.core.util.StringUtil;
 import guru.springframework.myspring7restmvc.model.Beer;
 import guru.springframework.myspring7restmvc.model.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +8,11 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by jt, Spring Framework Guru.
@@ -95,14 +98,12 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Beer updateById(UUID id, Beer beer) {
+    public void updateById(UUID id, Beer beer) {
         Beer existing = beerMap.get(id);
         existing.setBeerName(beer.getBeerName());
         existing.setUpc(beer.getUpc());
         existing.setPrice(beer.getPrice());
         existing.setQuantityOnHand(beer.getQuantityOnHand());
-
-        return existing;
     }
 
     @Override

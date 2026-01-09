@@ -1,22 +1,25 @@
 package guru.springframework.myspring7restmvc.model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@JsonDeserialize(builder = Customer.CustomerBuilder.class)
 @Builder
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Customer {
 
+    @JsonProperty
     private UUID id;
+    @JsonProperty
     private String customerName;
+    @JsonProperty
     private Integer version;
+
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 }
