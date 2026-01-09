@@ -37,7 +37,7 @@ public class CustomerController {
     @GetMapping(CUSTOMER_PATH_ID)
     public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
         log.debug("Get custormer by ID - in customer controller");
-        return customerService.findById(customerId);
+        return customerService.findById(customerId).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(CUSTOMER_PATH)

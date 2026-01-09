@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -57,8 +58,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer findById(UUID id) {
-        return customerMap.get(id);
+    public Optional<Customer> findById(UUID id) {
+        return Optional.of(customerMap.get(id));
     }
 
     @Override

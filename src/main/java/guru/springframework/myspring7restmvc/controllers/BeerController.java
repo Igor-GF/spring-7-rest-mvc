@@ -37,7 +37,7 @@ public class BeerController {
     @GetMapping(BEER_PATH_ID)
     public Beer getBeerById(@PathVariable("beerId") UUID id) {
         log.debug("Get beer by ID - in beer controller");
-        return beerService.getBeerById(id);
+        return beerService.getBeerById(id).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(BEER_PATH)
@@ -65,7 +65,6 @@ public class BeerController {
     @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity deleteBeerById(@PathVariable("beerId") UUID beerId) {
         beerService.deleteByID(beerId);
-
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
