@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@JsonDeserialize(builder = Beer.BeerBuilder.class)
+@JsonDeserialize(builder = BeerDTO.BeerDTOBuilder.class)
 @Builder
 @Data
-public class Beer {
+public class BeerDTO {
 
     @JsonProperty
     private UUID id;
