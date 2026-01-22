@@ -14,6 +14,7 @@ import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -27,7 +28,7 @@ public class Beer {
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
-    @Column(length = 36, columnDefinition = "varchair", updatable = false, nullable = false)
+    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     private UUID id;
 
     @Version
@@ -38,4 +39,6 @@ public class Beer {
     private String upc;
     private Integer quantityOnHand;
     private BigDecimal price;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }

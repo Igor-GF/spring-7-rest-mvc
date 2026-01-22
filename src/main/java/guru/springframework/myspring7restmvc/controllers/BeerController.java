@@ -52,7 +52,9 @@ public class BeerController {
 
     @PutMapping(BEER_PATH_ID)
     public ResponseEntity handleUpdateBeerById(@PathVariable UUID beerId, @RequestBody BeerDTO beerDTO) {
-        beerService.updateById(beerId, beerDTO);
+        if (beerService.updateById(beerId, beerDTO).isEmpty()) {
+           throw new NotFoundException();
+        }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -64,7 +66,9 @@ public class BeerController {
 
     @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity deleteBeerById(@PathVariable("beerId") UUID beerId) {
-        beerService.deleteByID(beerId);
+        if (!beerService.deleteByID(beerId)) {
+            throw new NotFoundException();
+        }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

@@ -21,34 +21,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     public CustomerServiceImpl() {
         customerMap = new HashMap<>();
-
-        CustomerDTO c1 = CustomerDTO.builder()
-                        .id(UUID.randomUUID())
-                        .customerName("Igor")
-                        .version(1)
-                        .createdDate(LocalDateTime.now())
-                        .updatedDate(LocalDateTime.now())
-                        .build();
-
-        CustomerDTO c2 = CustomerDTO.builder()
-                        .id(UUID.randomUUID())
-                        .customerName("Bruce")
-                        .version(2)
-                        .createdDate(LocalDateTime.now())
-                        .updatedDate(LocalDateTime.now())
-                        .build();
-
-        CustomerDTO c3 = CustomerDTO.builder()
-                        .id(UUID.randomUUID())
-                        .customerName("Clark")
-                        .version(3)
-                        .createdDate(LocalDateTime.now())
-                        .updatedDate(LocalDateTime.now())
-                        .build();
-
-        customerMap.put(c1.getId(), c1);
-        customerMap.put(c2.getId(), c2);
-        customerMap.put(c3.getId(), c3);
     }
 
     @Override
@@ -77,22 +49,26 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
         CustomerDTO existing = customerMap.get(customerId);
         existing.setCustomerName(customerDTO.getCustomerName());
+        return Optional.of(existing);
     }
 
     @Override
-    public void deleteById(UUID customerId) {
+    public Boolean deleteById(UUID customerId) {
         customerMap.remove(customerId);
+        return true;
     }
 
     @Override
-    public void patchById(UUID customerId, CustomerDTO customerDTO) {
+    public Optional<CustomerDTO> patchById(UUID customerId, CustomerDTO customerDTO) {
         CustomerDTO existing = customerMap.get(customerId);
 
         if (StringUtils.hasText(customerDTO.getCustomerName())) {
             existing.setCustomerName(customerDTO.getCustomerName());
         }
+
+        return Optional.of(existing);
     }
 }
