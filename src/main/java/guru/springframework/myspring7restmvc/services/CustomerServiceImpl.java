@@ -21,6 +21,34 @@ public class CustomerServiceImpl implements CustomerService {
 
     public CustomerServiceImpl() {
         customerMap = new HashMap<>();
+
+        CustomerDTO c1 = CustomerDTO.builder()
+                .id(UUID.randomUUID())
+                .customerName("Igor")
+                .version(1)
+                .createdDate(LocalDateTime.now())
+                .updatedDate(LocalDateTime.now())
+                .build();
+
+        CustomerDTO c2 = CustomerDTO.builder()
+                .id(UUID.randomUUID())
+                .customerName("Bruce")
+                .version(2)
+                .createdDate(LocalDateTime.now())
+                .updatedDate(LocalDateTime.now())
+                .build();
+
+        CustomerDTO c3 = CustomerDTO.builder()
+                .id(UUID.randomUUID())
+                .customerName("Clark")
+                .version(3)
+                .createdDate(LocalDateTime.now())
+                .updatedDate(LocalDateTime.now())
+                .build();
+
+        customerMap.put(c1.getId(), c1);
+        customerMap.put(c2.getId(), c2);
+        customerMap.put(c3.getId(), c3);
     }
 
     @Override
@@ -49,8 +77,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
-        CustomerDTO existing = customerMap.get(customerId);
+    public Optional<CustomerDTO> updateCustomerById(UUID id, CustomerDTO customerDTO) {
+        CustomerDTO existing = customerMap.get(id);
         existing.setCustomerName(customerDTO.getCustomerName());
         return Optional.of(existing);
     }

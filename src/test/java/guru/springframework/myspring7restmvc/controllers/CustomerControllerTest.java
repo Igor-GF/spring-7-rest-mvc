@@ -108,6 +108,8 @@ class CustomerControllerTest {
     void test_update_customer_by_id() throws Exception {
         CustomerDTO testCustomerDTO = customerServiceImpl.findAll().getFirst();
 
+        given(customerService.updateCustomerById(any(), any())).willReturn(Optional.of(testCustomerDTO));
+
         mockMvc.perform(put(CustomerController.CUSTOMER_PATH_ID, testCustomerDTO.getId())
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -122,6 +124,8 @@ class CustomerControllerTest {
     @Test
     void test_delete_customer_by_id() throws Exception {
         CustomerDTO testCustomerDTO = customerServiceImpl.findAll().getFirst();
+
+        given(customerService.deleteById(any())).willReturn(true);
 
         mockMvc.perform(delete(CustomerController.CUSTOMER_PATH_ID, testCustomerDTO.getId())
                 .accept(MediaType.APPLICATION_JSON))
