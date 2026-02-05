@@ -20,6 +20,8 @@ public class CustomerDTO {
     @JsonProperty
     private Integer version;
 
+    private String email;
+
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 }
