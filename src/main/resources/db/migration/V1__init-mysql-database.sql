@@ -3,7 +3,7 @@ drop table if exists beer;
 drop table if exists customer;
 
 create table beer (
-      beer_style smallint not null check ((beer_style between 0 and 1)),
+      beer_style smallint not null check ((beer_style between 0 and 9)),
       price decimal(38,2) not null,
       quantity_on_hand integer,
       version integer,

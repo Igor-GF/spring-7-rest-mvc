@@ -2,12 +2,14 @@ package guru.springframework.myspring7restmvc.services;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 import guru.springframework.myspring7restmvc.model.BeerCSVRecord;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
 
+@Service
 public class BeerCsvServiceImpl implements BeerCsvService {
     @Override
     public List<BeerCSVRecord> convertCSV(File csvFile) {
@@ -16,8 +18,8 @@ public class BeerCsvServiceImpl implements BeerCsvService {
             return new CsvToBeanBuilder<BeerCSVRecord>(new FileReader(csvFile))
                     .withType(BeerCSVRecord.class)
                     .build().parse();
-        } catch (FileNotFoundException ex) {
-            throw new RuntimeException(ex);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
