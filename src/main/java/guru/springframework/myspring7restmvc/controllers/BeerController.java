@@ -1,6 +1,7 @@
 package guru.springframework.myspring7restmvc.controllers;
 
 import guru.springframework.myspring7restmvc.model.BeerDTO;
+import guru.springframework.myspring7restmvc.model.BeerStyle;
 import guru.springframework.myspring7restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -31,8 +33,10 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping(BEER_PATH)
-    public List<BeerDTO> getBeers(){
-        return beerService.listBeers();
+    public List<BeerDTO> getBeers(@RequestParam(required = false) String beerName,
+                                  @RequestParam(required = false) BeerStyle beerStyle,
+                                  @RequestParam(required = false) Boolean showInventory) {
+        return beerService.listBeers(beerName, beerStyle, showInventory);
     }
 
     @GetMapping(BEER_PATH_ID)

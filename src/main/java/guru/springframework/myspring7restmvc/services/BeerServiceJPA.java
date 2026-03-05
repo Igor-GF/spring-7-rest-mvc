@@ -1,11 +1,14 @@
 package guru.springframework.myspring7restmvc.services;
 
+import guru.springframework.myspring7restmvc.entities.Beer;
 import guru.springframework.myspring7restmvc.mappers.BeerMapper;
 import guru.springframework.myspring7restmvc.model.BeerDTO;
+import guru.springframework.myspring7restmvc.model.BeerStyle;
 import guru.springframework.myspring7restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +25,39 @@ public class BeerServiceJPA implements BeerService {
     private final BeerMapper beerMapper;
 
     @Override
-    public List<BeerDTO> listBeers() {
-        return beerRepository.findAll()
-                .stream()
+    public List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
+
+        List<Beer> beerList;
+
+        if (StringUtils.hasText(beerName) && beerStyle != null) {
+            beerList = listBeerByNameAndStyle(beerName, beerStyle);
+        } else if (StringUtils.hasText(beerName)) {
+            beerList = listBeersByName(beerName);
+        } else if (beerStyle != null) {
+            beerList = listBeersByBeerStyle(beerStyle);
+        } else {
+            beerList = beerRepository.findAll();
+        }
+
+        if (showInventory != null && !showInventory) {
+            beerList.forEach(beer -> beer.setQuantityOnHand(null));
+        }
+
+        return beerList.stream()
                 .map(beerMapper::beerToBeerDTO)
                 .collect(Collectors.toList());
+    }
+
+    private List<Beer> listBeerByNameAndStyle(String beerName, BeerStyle beerStyle) {
+        return beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + beerName + "%", beerStyle);
+    }
+
+    private List<Beer> listBeersByName(String beerName) {
+        return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
+    }
+
+    private List<Beer> listBeersByBeerStyle(BeerStyle beerStyle) {
+        return beerRepository.findAllByBeerStyle(beerStyle);
     }
 
     @Override
@@ -52,9 +83,7 @@ public class BeerServiceJPA implements BeerService {
             foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
             atomicReference.set(Optional.of(beerMapper
                     .beerToBeerDTO(beerRepository.save(foundBeer))));
-        }, () -> {
-            atomicReference.set(Optional.empty());
-        });
+        }, () -> atomicReference.set(Optional.empty()));
 
         return atomicReference.get();
     }
@@ -80,9 +109,7 @@ public class BeerServiceJPA implements BeerService {
             foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
             atomicReference.set(Optional.of(beerMapper
                     .beerToBeerDTO(beerRepository.save(foundBeer))));
-        }, () -> {
-            atomicReference.set(Optional.empty());
-        });
+        }, () -> atomicReference.set(Optional.empty()));
 
         return atomicReference.get();
     }

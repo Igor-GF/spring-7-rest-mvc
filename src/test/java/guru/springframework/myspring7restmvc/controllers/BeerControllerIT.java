@@ -3,9 +3,10 @@ package guru.springframework.myspring7restmvc.controllers;
 import guru.springframework.myspring7restmvc.entities.Beer;
 import guru.springframework.myspring7restmvc.mappers.BeerMapper;
 import guru.springframework.myspring7restmvc.model.BeerDTO;
+import guru.springframework.myspring7restmvc.model.BeerStyle;
 import guru.springframework.myspring7restmvc.repositories.BeerRepository;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,8 +26,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -52,6 +56,53 @@ class BeerControllerIT {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
+
+    @Test
+    void test_list_beer_by_name_and_style_and_showInventoryTrue() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("showInventory", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(310)))
+                .andExpect(jsonPath("$[0].quantityOnHand").value(IsNull.notNullValue()));
+    }
+
+    @Test
+    void test_list_beer_by_name_and_style_and_showInventoryFalse() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("showInventory", "false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(310)))
+                .andExpect(jsonPath("$[0].quantityOnHand").value(IsNull.nullValue()));
+    }
+
+    @Test
+    void test_list_beer_by_name_and_style() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                    .queryParam("beerName", "IPA")
+                    .queryParam("beerStyle", BeerStyle.IPA.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(310)));
+    }
+
+    @Test
+    void test_list_beer_by_name() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                .queryParam("beerName", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(336)));
+    }
+
+    @Test
+    void test_list_beer_by_style() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                .queryParam("beerStyle", BeerStyle.IPA.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(548)));
     }
 
     @Test
@@ -89,9 +140,8 @@ class BeerControllerIT {
 
     @Test
     void test_update_returns_not_found() {
-        assertThrows(NotFoundException.class, () -> {
-            beerController.updateBeerById(UUID.randomUUID(), BeerDTO.builder().build());
-        });
+        assertThrows(NotFoundException.class, () ->
+                beerController.updateBeerById(UUID.randomUUID(), BeerDTO.builder().build()));
     }
 
     @Test
@@ -112,9 +162,9 @@ class BeerControllerIT {
 
     @Test
     void test_list_beers() {
-        List<BeerDTO> dtos = beerController.getBeers();
+        List<BeerDTO> dtos = beerController.getBeers(null, null, false);
 
-        assertThat(dtos.size()).isEqualTo(3);
+        assertThat(dtos.size()).isEqualTo(2413);
     }
 
     @Rollback
@@ -122,7 +172,7 @@ class BeerControllerIT {
     @Test
     void test_list_beers_return_empty() {
         beerRepository.deleteAll();
-        List<BeerDTO> dtos = beerController.getBeers();
+        List<BeerDTO> dtos = beerController.getBeers(null, null, false);
 
         assertThat(dtos.size()).isEqualTo(0);
 
@@ -138,10 +188,8 @@ class BeerControllerIT {
 
     @Test
     void test_get_beer_by_id_returns_not_found() {
-        assertThrows(NotFoundException.class, () -> {
-            beerController.getBeerById(UUID.randomUUID());
-        });
-
+        assertThrows(NotFoundException.class, () ->
+                beerController.getBeerById(UUID.randomUUID()));
     }
 
     @Rollback

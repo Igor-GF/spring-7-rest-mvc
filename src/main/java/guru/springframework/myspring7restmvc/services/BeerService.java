@@ -1,13 +1,14 @@
 package guru.springframework.myspring7restmvc.services;
 
 import guru.springframework.myspring7restmvc.model.BeerDTO;
+import guru.springframework.myspring7restmvc.model.BeerStyle;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface BeerService {
-    List<BeerDTO> listBeers();
+    List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory);
     Optional<BeerDTO> getBeerById(UUID id);
     BeerDTO saveBeer(BeerDTO beerDTO);
     Optional<BeerDTO> updateById(UUID beerId, BeerDTO beerDTO);
